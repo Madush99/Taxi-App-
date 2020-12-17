@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_taxiapp/AllScreens/searchScreen.dart';
 import 'package:flutter_taxiapp/AllWidgets/Divider.dart';
 import 'package:flutter_taxiapp/Assistant/Methods.dart';
 import 'package:flutter_taxiapp/DataHandler/appData.dart';
@@ -187,7 +188,7 @@ class _MainScreenState extends State<MainScreen> {
                     GestureDetector(
                       onTap: ()
                       {
-
+                        Navigator.push(context,MaterialPageRoute(builder: (context) => SearchScreen()));
                       },
                       child: Container(
                         decoration: BoxDecoration(
