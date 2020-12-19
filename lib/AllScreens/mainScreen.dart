@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_taxiapp/AllScreens/searchScreen.dart';
 import 'package:flutter_taxiapp/AllWidgets/Divider.dart';
+import 'package:flutter_taxiapp/AllWidgets/progressDialog.dart';
 import 'package:flutter_taxiapp/Assistant/Methods.dart';
 import 'package:flutter_taxiapp/DataHandler/appData.dart';
 import 'package:geolocator/geolocator.dart';
@@ -186,9 +187,14 @@ class _MainScreenState extends State<MainScreen> {
                     Text("Where to?", style: TextStyle(fontSize: 20.0, fontFamily: "Brand-Bold"),),
                     SizedBox(height: 20.0),
                     GestureDetector(
-                      onTap: ()
+                      onTap: () async
                       {
-                        Navigator.push(context,MaterialPageRoute(builder: (context) => SearchScreen()));
+                        var res = await Navigator.push(context,MaterialPageRoute(builder: (context) => SearchScreen()));
+
+                        if(res == "obtainDirection")
+                          {
+                            await getPlaceDirections();
+                          }
                       },
                       child: Container(
                         decoration: BoxDecoration(
@@ -262,6 +268,27 @@ class _MainScreenState extends State<MainScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> getPlaceDirections() async
+  {
+    var initialPos = Provider.of<AppData>(context, listen: false).pickupLocation;
+    var finalPos = Provider.of<AppData>(context, listen: false).dropOffLocation;
+
+    var pickUpLapLng = LatLng(initialPos.latitude, initialPos.longitude);
+    var dropOffLapLng = LatLng(finalPos.latitude, finalPos.longitude);
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => ProgressDialog(message: "Please wait..",)
+    );
+
+    var details = await AssisMethods.obtainPlaceDirectionsDetails(pickUpLapLng, dropOffLapLng);
+
+    Navigator.pop(context);
+
+    print("This is encoded points:: ");
+    print(details.encodedPoints);
   }
 }
 
