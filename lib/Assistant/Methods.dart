@@ -1,7 +1,10 @@
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_taxiapp/Assistant/requestAssit.dart';
 import 'package:flutter_taxiapp/DataHandler/appData.dart';
 import 'package:flutter_taxiapp/Models/address.dart';
+import 'package:flutter_taxiapp/Models/allUsers.dart';
 import 'package:flutter_taxiapp/Models/directionDetails.dart';
 import 'package:flutter_taxiapp/configMaps.dart';
 import 'package:geolocator/geolocator.dart';
@@ -73,6 +76,20 @@ class AssisMethods{
 
     return totalFareAmount.truncate();
 
+  }
+
+  static void getCurrentOnlineUserInfo() async
+  {
+    firebaseUser = await FirebaseAuth.instance.currentUser;
+    String userId = firebaseUser.uid;
+    DatabaseReference reference = FirebaseDatabase.instance.reference().child("users").child(userId);
+
+    reference.once().then((DataSnapshot dataSnapshot) {
+      if(dataSnapshot.value != null)
+        {
+          userCurrentInfo = Users.fromSnapshot(dataSnapshot);
+        }
+    } );
   }
 
 }
